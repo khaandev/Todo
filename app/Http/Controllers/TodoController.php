@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TodoController extends Controller
 {
@@ -12,7 +13,9 @@ class TodoController extends Controller
      */
     public function index()
     {
-        //
+        $todos = Todo::get();
+
+        return Inertia::render('app/todo/Index',['todos' =>$todos]);
     }
 
     /**
@@ -20,7 +23,8 @@ class TodoController extends Controller
      */
     public function create()
     {
-        //
+
+        return Inertia::render('app/todo/Create');
     }
 
     /**
@@ -28,7 +32,23 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $validate = $request->validate([
+            'title' => 'required|max:225',
+            'description' => 'max:225',
+             'due_date'    => 'required|date|after_or_equal:today',
+
+        ]);
+
+        $validate['user_id'] = auth()->id();
+
+
+
+        Todo::create($validate);
+
+
+
+        return redirect()->route('todos.index');
     }
 
     /**
@@ -44,7 +64,10 @@ class TodoController extends Controller
      */
     public function edit(Todo $todo)
     {
-        //
+
+        return Inertia::render('app/todo/Edit',[
+            'todo' => $todo,
+        ]);
     }
 
     /**
@@ -52,7 +75,20 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $todo)
     {
-        //
+
+        $validated = $request->validate([
+            'title' => 'required|max:225',
+            'description' => 'max:225',
+            'due_date'    => 'required|date|after_or_equal:today',
+
+        ]);
+
+        $validated['user_id'] = auth()->id();
+
+        $todo->update($validated);
+
+
+        return redirect()->route('todos.index');
     }
 
     /**
@@ -60,6 +96,8 @@ class TodoController extends Controller
      */
     public function destroy(Todo $todo)
     {
-        //
+        $todo->delete();
+        return redirect()->route('todos.index');
+
     }
 }
