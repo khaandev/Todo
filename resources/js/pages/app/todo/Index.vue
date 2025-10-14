@@ -17,6 +17,7 @@
                     <thead class="bg-zinc-900 text-white">
                         <tr>
                             <th class="px-4 py-3">#</th>
+                            <th class="px-4 py-3">Images</th>
                             <th class="px-4 py-3">Title</th>
                             <th class="px-4 py-3">Description</th>
                             <th class="px-4 py-3">Status</th>
@@ -29,6 +30,12 @@
                         <tr v-for="(todo, index) in todos" :key="todo.id"
                             class="border-b border-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
                             <td class="px-4 py-3">{{ index + 1 }}</td>
+                            <td class="px-4 py-3 font-medium">
+                                <img :src="`/storage/${todo.images[0]}`" alt="Todo Image"
+                                    class="w-16 h-16 object-cover rounded" v-if="todo.images">
+                                <span v-else>No Image</span>
+                            </td>
+
                             <td class="px-4 py-3 font-medium">{{ todo . title }}</td>
                             <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">
                                 {{ todo . description }}

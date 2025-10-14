@@ -36,11 +36,25 @@ class TodoController extends Controller
         $validate = $request->validate([
             'title' => 'required|max:225',
             'description' => 'max:225',
-             'due_date'    => 'required|date|after_or_equal:today',
+            'images' => 'nullable|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png,gif,svg|max:2048',
+            'due_date'    => 'required|date|after_or_equal:today',
 
         ]);
+        $images = [];
+
+        if($request->hasFile('images'))
+        {
+            foreach($request->file('images') as $image)
+            {
+                $path = $image->store('todos','public');
+                $images[] =$path;
+            }
+        }
 
         $validate['user_id'] = auth()->id();
+        $validate['images'] = $images;
+
 
 
 
